@@ -3,20 +3,22 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useRouter } from "next/navigation";
 import InputField from "../../components/inputField";
 import Button from "../../components/button";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 
-// Zod schema for registration
+// Zod schema for validation
 const registerSchema = z
   .object({
-    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-    confirmPassword: z.string().min(6, { message: "Confirm your password" }),
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Confirm password is required"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords must match",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
@@ -29,17 +31,35 @@ export default function RegisterPage() {
   });
 
   const onSubmit = (data: RegisterFormInputs) => {
-    console.log("Register data:", data);
-    alert("Registration successful!");
+    console.log("Registration data:", data);
+    alert("Registration successful! Redirecting to login...");
     router.push("/login");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Create Account</h1>
+    <div className="min-h-screen bg-linear-to-r from-blue-400 to-purple-600 relative flex items-center justify-center">
+      
+      {/* ✅ WEBSITE LOGO (Top-left) */}
+      <Link href="/" className="absolute top-6 left-6 flex items-center gap-2">
+        <Image
+          src="/logo.svg"
+          alt="Event-HUB Logo"
+          width={36}
+          height={36}
+          priority
+        />
+        <span className="text-xl font-bold text-white">
+          Event<span className="text-yellow-300">HUB</span>
+        </span>
+      </Link>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+      {/* Register Card */}
+      <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+          Create Your Account
+        </h1>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <InputField
             label="Full Name"
             name="name"
@@ -48,6 +68,7 @@ export default function RegisterPage() {
           />
           <InputField
             label="Email"
+            type="email"
             name="email"
             register={register}
             error={errors.email?.message}
@@ -66,9 +87,10 @@ export default function RegisterPage() {
             register={register}
             error={errors.confirmPassword?.message}
           />
+
           <Button
             type="submit"
-            className="mt-4 w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
+            className="mt-4 w-full bg-linear-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
           >
             Register
           </Button>
@@ -76,7 +98,7 @@ export default function RegisterPage() {
 
         <p className="text-center text-gray-500 mt-6">
           Already have an account?{" "}
-          <a href="/login" className="text-purple-600 hover:underline">
+          <a href="/login" className="text-blue-600 hover:underline">
             Login
           </a>
         </p>

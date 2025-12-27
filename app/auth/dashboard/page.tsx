@@ -1,52 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Navbar */}
-      <nav className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              {/* Logo */}
-              <Link href="/" className="flex items-center gap-2">
-                <Image
-                  src="/logo.svg"
-                  alt="Event-HUB Logo"
-                  width={32}
-                  height={32}
-                  priority
-                />
-                <span className="text-xl font-bold text-gray-800">
-                  Event<span className="text-yellow-500">HUB</span>
-                </span>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/auth/dashboard"
-                className="text-gray-700 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/auth/profile"
-                className="text-gray-700 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Profile
-              </Link>
-              <button className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium">
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <div className="p-8">
+    <div className="min-h-screen bg-gray-100 p-8">
+      {/* Header */}
+      <header className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">Event-HUB Dashboard</h1>
+        <Link
+          href="/"
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          Home
+        </Link>
+      </header>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -88,7 +56,6 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
-    </div>
     </div>
   );
 }

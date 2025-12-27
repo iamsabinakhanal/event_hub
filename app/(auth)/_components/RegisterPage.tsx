@@ -6,7 +6,6 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 import InputField from "../../components/inputField";
 import Button from "../../components/button";
-import Image from "next/image";
 import Link from "next/link";
 
 // Zod schema for validation
@@ -15,93 +14,70 @@ const registerSchema = z
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(6, "Confirm password is required"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
   });
 
-type RegisterFormInputs = z.infer<typeof registerSchema>;
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormInputs>({
+
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (data: RegisterFormInputs) => {
-    console.log("Registration data:", data);
-    alert("Registration successful! Redirecting to login...");
+  const onSubmit = (data: RegisterFormData) => {
+    console.log("Registration Data:", data);
     router.push("/login");
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-r from-blue-400 to-purple-600 relative flex items-center justify-center">
-      
-      {/* ✅ WEBSITE LOGO (Top-left) */}
-      <Link href="/" className="absolute top-6 left-6 flex items-center gap-2">
-        <Image
-          src="/logo.svg"
-          alt="Event-HUB Logo"
-          width={36}
-          height={36}
-          priority
-        />
-        <span className="text-xl font-bold text-white">
-          Event<span className="text-yellow-300">HUB</span>
-        </span>
-      </Link>
-
-      {/* Register Card */}
-      <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Create Your Account
-        </h1>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <InputField
-            label="Full Name"
-            name="name"
-            register={register}
-            error={errors.name?.message}
-          />
-          <InputField
-            label="Email"
-            type="email"
-            name="email"
-            register={register}
-            error={errors.email?.message}
-          />
-          <InputField
-            label="Password"
-            type="password"
-            name="password"
-            register={register}
-            error={errors.password?.message}
-          />
-          <InputField
-            label="Confirm Password"
-            type="password"
-            name="confirmPassword"
-            register={register}
-            error={errors.confirmPassword?.message}
-          />
-
-          <Button
-            type="submit"
-            className="mt-4 w-full bg-linear-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-          >
-            Register
-          </Button>
-        </form>
-
-        <p className="text-center text-gray-500 mt-6">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
-            Login
-          </a>
+    <div className="min-h-screen flex bg-purple-300">
+      {/* Left Panel */}
+      <div className="w-1/2 hidden md:flex flex-col items-center justify-center bg-pink-300 text-white p-10">
+        <h1 className="text-3xl font-semibold mb-4">Welcome</h1>
+        <p className="mb-6 text-center">
+          Hello! Sign in to access your Event Hub dashboard
         </p>
+        <Link href="/login">
+          <button className="border border-white px-6 py-2 rounded hover:bg-white hover:text-pink-300 transition">
+            Sign In
+          </button>
+        </Link>
+      </div>
+
+      {/* Right Panel - Form */}
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-white p-10">
+        <div className="w-full max-w-sm">
+          <h2 className="text-xl font-semibold mb-6">Create account</h2>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <InputField
+              label="Name"
+              name="name"
+              register={register}
+              error={errors.name?.message}
+              placeholder="Enter your name"
+            />
+            <InputField
+              label="Email"
+              name="email"
+              type="email"
+              register={register}
+              error={errors.email?.message}
+              placeholder="Enter your email"
+            />
+            <InputField
+              label="Password"
+              name="password"
+              type="password"
+              register={register}
+              error={errors.password?.message}
+              placeholder="Enter password"
+            />
+            <Button type="submit" className="w-full bg-gray-200 text-black hover:bg-gray-300">
+              Sign In
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );

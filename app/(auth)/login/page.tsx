@@ -1,7 +1,8 @@
-import LoginPage from "../_components/LoginPage";
+import LoginForm from "../_components/LoginForm";
 
-export default function Page() {
+
+export default function LoginPage() {
     return (
-        <div><LoginPage /></div>
+        <LoginForm/>
     );
 }

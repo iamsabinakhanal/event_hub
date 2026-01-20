@@ -1,20 +1,25 @@
+"use client";
+
 import React from "react";
 
-interface ButtonProps {
-  children: React.ReactNode;
-  type?: "button" | "submit";
-  className?: string;
-}
+export type ButtonProps =
+  React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-const Button: React.FC<ButtonProps> = ({ children, type = "button", className }) => {
+const Button = React.forwardRef<
+  HTMLButtonElement,
+  ButtonProps
+>(({ className = "", children, ...props }, ref) => {
   return (
     <button
-      type={type}
-      className={`py-3 px-6 rounded-lg text-white font-semibold shadow-lg ${className}`}
+      ref={ref}
+      className={`transition-all ${className}`}
+      {...props}
     >
       {children}
     </button>
   );
-};
+});
+
+Button.displayName = "Button";
 
 export default Button;

@@ -1,127 +1,64 @@
-"use client";
-
+import Navbar from "./components/navbar";
 import Link from "next/link";
-import { 
-  Calendar, 
-  Users, 
-  Ticket, 
-  Plus, 
-  Search,
-  MoreVertical 
-} from "lucide-react"; // Using Lucide for clean icons
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* 1. Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
-        <div className="p-6">
-          <span className="text-2xl font-bold text-gray-900">
-            Event<span className="text-blue-600">HUB</span>
-          </span>
-        </div>
-        <nav className="flex-1 px-4 space-y-2">
-          <Link href="#" className="flex items-center gap-3 p-3 bg-blue-50 text-blue-700 rounded-lg font-medium">
-            <Calendar size={20} /> Dashboard
-          </Link>
-          <Link href="#" className="flex items-center gap-3 p-3 text-gray-600 hover:bg-gray-50 rounded-lg">
-            <Users size={20} /> Attendees
-          </Link>
-          <Link href="#" className="flex items-center gap-3 p-3 text-gray-600 hover:bg-gray-50 rounded-lg">
-            <Ticket size={20} /> Tickets
-          </Link>
-        </nav>
-      </aside>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
 
-      {/* 2. Main Content */}
-      <main className="flex-1 p-8">
-        {/* Header */}
-        <header className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Events Overview</h1>
-            <p className="text-gray-500 text-sm">Welcome back, here is what's happening today.</p>
-          </div>
-          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-sm">
-            <Plus size={18} /> Create Event
-          </button>
-        </header>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <div className="flex justify-between items-start text-gray-400 mb-4">
-              <Calendar size={24} className="text-blue-600" />
-              <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">+12%</span>
-            </div>
-            <p className="text-sm text-gray-500 font-medium">Active Events</p>
-            <h3 className="text-3xl font-bold text-gray-900">24</h3>
-          </div>
-
-          <div className="p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <div className="flex justify-between items-start text-gray-400 mb-4">
-              <Users size={24} className="text-purple-600" />
-              <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">+5%</span>
-            </div>
-            <p className="text-sm text-gray-500 font-medium">Total Attendees</p>
-            <h3 className="text-3xl font-bold text-gray-900">1,284</h3>
-          </div>
-
-          <div className="p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <div className="flex justify-between items-start text-gray-400 mb-4">
-              <Ticket size={24} className="text-orange-600" />
-              <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">-2%</span>
-            </div>
-            <p className="text-sm text-gray-500 font-medium">Tickets Sold</p>
-            <h3 className="text-3xl font-bold text-gray-900">856</h3>
-          </div>
-        </div>
-
-        {/* Upcoming Events Table */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-            <h2 className="font-bold text-gray-800">Upcoming Events</h2>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-              <input 
-                type="text" 
-                placeholder="Search events..." 
-                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100"
-              />
+      <main>
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-24">
+          <div className="max-w-6xl mx-auto px-6 text-center">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              Where every event becomes extraordinary
+            </h1>
+            <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+              Event Hub is a smart platform that makes planning, managing, and joining events simple and effortless.
+            </p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link href="/login" className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                Login
+              </Link>
+              <Link href="/register" className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition">
+                Register
+              </Link>
             </div>
           </div>
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
-              <tr>
-                <th className="px-6 py-4">Event Name</th>
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 text-sm">
-              {[
-                { name: "Tech Conference 2026", date: "Jan 25, 2026", status: "Published", color: "text-green-600 bg-green-50" },
-                { name: "Product Launch", date: "Feb 02, 2026", status: "Draft", color: "text-gray-600 bg-gray-50" },
-                { name: "Music Festival", date: "Mar 15, 2026", status: "Published", color: "text-green-600 bg-green-50" },
-              ].map((event, i) => (
-                <tr key={i} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-900">{event.name}</td>
-                  <td className="px-6 py-4 text-gray-600">{event.date}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${event.color}`}>
-                      {event.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <MoreVertical size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="max-w-6xl mx-auto px-6 py-16">
+          <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">Why Choose Event Hub</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-lg shadow hover:shadow-lg transition">
+              <div className="text-4xl mb-4">🎉</div>
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Easy Planning</h3>
+              <p className="text-gray-600">Simple tools to plan, organize, and manage all types of events effortlessly.</p>
+            </div>
+            <div className="bg-white p-8 rounded-lg shadow hover:shadow-lg transition">
+              <div className="text-4xl mb-4">👥</div>
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Guest Management</h3>
+              <p className="text-gray-600">Invite guests, track RSVPs, and manage attendance all in one place.</p>
+            </div>
+            <div className="bg-white p-8 rounded-lg shadow hover:shadow-lg transition">
+              <div className="text-4xl mb-4">📊</div>
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Analytics</h3>
+              <p className="text-gray-600">Get insights and reports to make your events more successful.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="bg-pink-100 py-16">
+          <div className="max-w-6xl mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Ready to Get Started?</h2>
+            <p className="text-gray-600 mb-8 text-lg">Join thousands of event planners using Event Hub</p>
+            <Link href="/register" className="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 transition inline-block">
+              Create Your Account
+            </Link>
+          </div>
+        </section>
       </main>
     </div>
   );

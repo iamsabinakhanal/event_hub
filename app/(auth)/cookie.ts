@@ -15,27 +15,27 @@ interface UserData {
 export const setAuthToken = async (token: string) => {
   const cookieStore = await cookies();
   cookieStore.set({
-    name: "lifelink_token",
+    name: "auth_token",
     value: token,
   });
 };
 
 export const getAuthToken = async () => {
   const cookieStore = await cookies();
-  return cookieStore.get("lifelink_token")?.value || null;
+  return cookieStore.get("auth_token")?.value || null;
 };
 
 export const setUserData = async (userData: UserData) => {
   const cookieStore = await cookies();
   cookieStore.set({
-    name: "lifelink_user",
+    name: "user_data",
     value: JSON.stringify(userData),
   });
 };
 
 export const getUserData = async (): Promise<UserData | null> => {
   const cookieStore = await cookies();
-  const userData = cookieStore.get("lifelink_user")?.value || null;
+  const userData = cookieStore.get("user_data")?.value || null;
   return userData ? JSON.parse(userData) : null;
 };
 

@@ -33,11 +33,11 @@ export default function LoginForm() {
       try {
         const response = await handleLogin(values);
 
-        if (!response.sucess) {
+        if (!response.success) {
           throw new Error(response.message);
         }
 
-        router.push("/user/dashboard");
+        router.push("/auth/dashboard");
       } catch (err: any) {
         setError(err.message || "Login failed");
       }

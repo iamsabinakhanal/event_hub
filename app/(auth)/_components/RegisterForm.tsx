@@ -38,7 +38,7 @@ export default function RegisterForm() {
 
     setIsSubmitting(false);
 
-    if (!res.sucess) {
+    if (!res.success) {
       alert(res.message || "Registration failed");
       return;
     }

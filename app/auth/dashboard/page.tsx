@@ -1,6 +1,7 @@
 import { getUserData, getAuthToken } from "@/lib/cookies";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Navbar from "@/app/components/navbar";
 
 export default async function DashboardPage() {
   const token = await getAuthToken();
@@ -13,8 +14,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar />
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-20">
+      <section className="bg-linear-to-r from-purple-500 to-pink-500 text-white py-20">
         <div className="mx-auto max-w-6xl px-6 text-center">
           <h1 className="text-5xl font-bold mb-4">
             Where every event becomes extraordinary
@@ -25,32 +27,6 @@ export default async function DashboardPage() {
           <button className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
             Learn More
           </button>
-        </div>
-      </section>
-
-      {/* User Info Section */}
-      <section className="mx-auto max-w-6xl px-6 py-16">
-        <div className="bg-white rounded-lg shadow p-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-8">Welcome Back, {userData.firstName}!</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div>
-              <p className="text-sm text-gray-500 mb-2">First Name</p>
-              <p className="text-lg font-semibold text-gray-800">{userData.firstName || 'N/A'}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 mb-2">Last Name</p>
-              <p className="text-lg font-semibold text-gray-800">{userData.lastName || 'N/A'}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 mb-2">Email</p>
-              <p className="text-lg font-semibold text-gray-800">{userData.email || 'N/A'}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 mb-2">Status</p>
-              <p className="text-lg font-semibold text-green-600">✓ Authenticated</p>
-            </div>
-          </div>
         </div>
       </section>
 

@@ -2,7 +2,7 @@
 "use server";
 
 import {registerUser, loginUser} from "../api/auth";
-import { setAuthToken, setUserData } from "../cookies";
+import { setAuthToken, setUserData, clearAuthCookies } from "../cookies";
 
 export const handleRegister=async(registerData:any)=>{
     //call backend api
@@ -55,3 +55,19 @@ export const handleRegister=async(registerData:any)=>{
             }
         }
     }
+
+export const logoutUser = async () => {
+    try {
+        // Clear auth token and user data from cookies
+        await clearAuthCookies();
+        return {
+            success: true,
+            message: "Logout successful"
+        };
+    } catch (err: Error | any) {
+        return {
+            success: false,
+            message: err.message || "Logout failed"
+        };
+    }
+};

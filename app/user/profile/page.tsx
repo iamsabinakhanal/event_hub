@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "@/lib/action/admin_action";
+import Navbar from "@/app/components/navbar";
+import { Upload, Camera } from "lucide-react";
 
 export default function UserProfilePage() {
     const router = useRouter();
@@ -121,9 +123,10 @@ export default function UserProfilePage() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <div className="max-w-2xl mx-auto px-6 py-10">
-                <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
+            <Navbar />
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div className="flex items-center justify-between mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
                     <button
                         type="button"
                         onClick={() => router.back()}
@@ -134,121 +137,198 @@ export default function UserProfilePage() {
                 </div>
 
                 {message && (
-                    <div className={`mb-4 p-3 rounded-md ${message.includes("success") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                    <div className={`mb-6 p-4 rounded-lg ${message.includes("success") ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
                         {message}
                     </div>
                 )}
 
-                <form id="profile-form" onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
-                    <div className="flex items-center gap-4">
-                        {imagePreview ? (
-                            <img
-                                src={imagePreview}
-                                alt="Preview"
-                                className="w-16 h-16 rounded-full object-cover"
-                            />
-                        ) : userData.image ? (
-                            <img
-                                src={`http://localhost:5000/${userData.image}`}
-                                alt="Current"
-                                className="w-16 h-16 rounded-full object-cover"
-                            />
-                        ) : (
-                            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
-                                <span className="text-gray-500 text-lg font-semibold">
-                                    {initials}
-                                </span>
+                {/* User Info Section */}
+                <section className="bg-white rounded-lg shadow p-8 mb-8">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Welcome Back, {userData.firstName}!</h2>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div className="border-l-4 border-blue-500 pl-4">
+                            <p className="text-sm text-gray-600 mb-2">First Name</p>
+                            <p className="text-lg font-semibold text-gray-900">{userData.firstName || 'N/A'}</p>
+                        </div>
+                        <div className="border-l-4 border-indigo-500 pl-4">
+                            <p className="text-sm text-gray-600 mb-2">Last Name</p>
+                            <p className="text-lg font-semibold text-gray-900">{userData.lastName || 'N/A'}</p>
+                        </div>
+                        <div className="border-l-4 border-purple-500 pl-4">
+                            <p className="text-sm text-gray-600 mb-2">Email</p>
+                            <p className="text-lg font-semibold text-gray-900">{userData.email || 'N/A'}</p>
+                        </div>
+                        <div className="border-l-4 border-green-500 pl-4">
+                            <p className="text-sm text-gray-600 mb-2">Status</p>
+                            <p className="text-lg font-semibold text-green-600">✓ Authenticated</p>
+                        </div>
+                    </div>
+                </section>
+
+                <form id="profile-form" onSubmit={handleSubmit} className="space-y-8">
+                    {/* Profile Picture Section */}
+                    <div className="bg-white border border-gray-200 rounded-lg p-8">
+                        <h2 className="text-lg font-semibold text-gray-900 mb-6">Profile Picture</h2>
+                        <div className="flex flex-col sm:flex-row gap-8">
+                            <div className="flex flex-col items-center">
+                                {imagePreview ? (
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-lg"
+                                    />
+                                ) : userData.image ? (
+                                    <img
+                                        src={`http://localhost:5000/${userData.image}`}
+                                        alt="Current"
+                                        className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 shadow-lg"
+                                    />
+                                ) : (
+                                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border-4 border-gray-200">
+                                        <span className="text-4xl font-bold text-blue-600">
+                                            {initials}
+                                        </span>
+                                    </div>
+                                )}
+                                <p className="mt-3 text-sm text-gray-600 font-medium">
+                                    {userData.firstName} {userData.lastName}
+                                </p>
                             </div>
-                        )}
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                                First Name
-                            </label>
-                            <input
-                                type="text"
-                                id="firstName"
-                                name="firstName"
-                                value={formData.firstName}
-                                onChange={handleInputChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                                Last Name
-                            </label>
-                            <input
-                                type="text"
-                                id="lastName"
-                                name="lastName"
-                                value={formData.lastName}
-                                onChange={handleInputChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
+                            <div className="flex-1">
+                                <label className="block mb-2">
+                                    <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            className="hidden"
+                                        />
+                                        <div className="flex flex-col items-center gap-2">
+                                            <Camera className="w-8 h-8 text-gray-400" />
+                                            <p className="text-sm font-medium text-gray-700">
+                                                Click to upload or drag and drop
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                                PNG, JPG, GIF up to 10MB
+                                            </p>
+                                        </div>
+                                    </div>
+                                </label>
+                                {imagePreview && (
+                                    <p className="text-sm text-green-600 font-medium">
+                                        ✓ New image selected
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                                New Password
-                            </label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                                placeholder="Leave blank"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
+                    {/* Personal Information Section */}
+                    <div className="bg-white border border-gray-200 rounded-lg p-8">
+                        <h2 className="text-lg font-semibold text-gray-900 mb-6">Personal Information</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                                    First Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="firstName"
+                                    name="firstName"
+                                    value={formData.firstName}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Last Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="lastName"
+                                    name="lastName"
+                                    value={formData.lastName}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
                         </div>
                         <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                                Confirm Password
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                Email
                             </label>
                             <input
-                                type="password"
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                value={formData.confirmPassword}
+                                type="email"
+                                id="email"
+                                name="email"
+                                value={formData.email}
                                 onChange={handleInputChange}
-                                placeholder="Repeat"
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
                     </div>
 
-                    <div className="flex justify-end">
+                    {/* Security Section */}
+                    <div className="bg-white border border-gray-200 rounded-lg p-8">
+                        <h2 className="text-lg font-semibold text-gray-900 mb-6">Security</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                                    New Password
+                                </label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleInputChange}
+                                    placeholder="Leave blank"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Confirm Password
+                                </label>
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleInputChange}
+                                    placeholder="Repeat"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    {/* Action Buttons */}
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={() => router.back()}
+                            className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                        >
+                            Cancel
+                        </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300"
+                            className="px-6 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400 transition flex items-center gap-2"
                         >
-                            {loading ? "Saving..." : "Save"}
+                            {loading ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <Upload size={16} />
+                                    Save Changes
+                                </>
+                            )}
                         </button>
                     </div>
                 </form>

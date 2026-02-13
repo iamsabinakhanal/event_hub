@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { LoginData, loginSchema } from "../../scheme";
 import { handleLogin } from "@/lib/action/auth_action";
@@ -14,8 +14,10 @@ import Button from "../../components/button";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const redirectUrl = searchParams?.get("redirect") || null;
 
   const {
     register,
@@ -37,7 +39,9 @@ export default function LoginForm() {
           throw new Error(response.message);
         }
 
-        router.push("/auth/dashboard");
+        // Use the redirect URL if provided, otherwise go to dashboard
+        const destination = redirectUrl || "/admin";
+        router.push(destination);
       } catch (err: any) {
         setError(err.message || "Login failed");
       }

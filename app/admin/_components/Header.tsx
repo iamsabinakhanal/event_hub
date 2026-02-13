@@ -33,6 +33,8 @@ export default function Header() {
         setLoading(true);
         try {
             await logoutUser();
+            // Clear localStorage
+            localStorage.removeItem("user_data");
             router.push("/login");
         } catch (error) {
             console.error("Logout failed:", error);

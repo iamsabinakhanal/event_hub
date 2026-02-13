@@ -77,13 +77,14 @@ export const createUserAdmin = async (formData: FormData) => {
         return {
             success: true,
             data: response.data.data,
-            message: response.data.message,
+            message: response.data.message || "User created successfully",
         };
     } catch (error: any) {
         console.error("[createUserAdmin] error:", error);
+        console.error("[createUserAdmin] error response:", error.response?.data);
         return {
             success: false,
-            message: error.response?.data?.message || "Failed to create user",
+            message: error.response?.data?.message || error.message || "Failed to create user",
         };
     }
 };

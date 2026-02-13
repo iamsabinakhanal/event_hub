@@ -40,3 +40,37 @@ export const loginUser = async(loginData: any) => {
         );
     }
 }
+
+export const forgetPassword = async(email: string) => {
+    try{
+        const response = await axios.post(
+            API.AUTH.FORGET_PASSWORD,
+            { email }
+        );
+        return response.data;
+    }catch(err: Error | any){
+        throw new Error
+        (
+            err.response?.data?.message
+            || err.message
+            ||"Failed to send reset link"
+        );
+    }
+}
+
+export const resetPassword = async(token: string, newPassword: string) => {
+    try{
+        const response = await axios.post(
+            API.AUTH.RESET_PASSWORD,
+            { token, newPassword }
+        );
+        return response.data;
+    }catch(err: Error | any){
+        throw new Error
+        (
+            err.response?.data?.message
+            || err.message
+            ||"Failed to reset password"
+        );
+    }
+}

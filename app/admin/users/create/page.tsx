@@ -88,9 +88,11 @@ export default function CreateUserPage() {
                 }, 1500);
             } else {
                 setMessage(result.message || "Failed to create user");
+                console.error("Create user failed:", result);
             }
-        } catch (error) {
-            setMessage("An error occurred while creating user");
+        } catch (error: any) {
+            console.error("Create user error:", error);
+            setMessage(error.message || "An error occurred while creating user");
         } finally {
             setLoading(false);
         }

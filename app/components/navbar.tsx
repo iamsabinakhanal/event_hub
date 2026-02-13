@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { logoutUser } from "@/lib/action/auth_action";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -20,16 +22,46 @@ const defaultProfileImage =
   );
 
 export default function Navbar() {
+  const router = useRouter();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-
-  // Sample user data - replace with actual user data from context/store
-  const user = {
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState({
     name: "Event Manager",
     email: "manager@eventhub.com",
-    profilePicture: null, // or use actual image URL
-  };
+    profilePicture: null as string | null,
+  });
+
+  // Get user data from localStorage
+  useEffect(() => {
+    const userDataString = localStorage.getItem("user_data");
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      setUser({
+        name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim() || "User",
+        email: userData.email || "",
+        profilePicture: userData.image ? `http://localhost:5000/${userData.image}` : null,
+      });
+    }
+  }, []);
 
   const profileImage = user.profilePicture || defaultProfileImage;
+
+  const handleLogout = async () => {
+    setLoading(true);
+    setIsProfileMenuOpen(false);
+    try {
+      const result = await logoutUser();
+      if (result.success) {
+        // Clear localStorage
+        localStorage.removeItem("user_data");
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <header className="w-full bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-sm">
@@ -130,11 +162,12 @@ export default function Navbar() {
                 {/* Logout */}
                 <div className="border-t border-gray-200 py-1">
                   <button
-                    onClick={() => setIsProfileMenuOpen(false)}
-                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
+                    onClick={handleLogout}
+                    disabled={loading}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <LogOut size={18} />
-                    <span>Logout</span>
+                    <span>{loading ? "Logging out..." : "Logout"}</span>
                   </button>
                 </div>
               </div>

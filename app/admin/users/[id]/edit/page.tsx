@@ -26,7 +26,7 @@ export default function EditUserPage() {
     const [currentImage, setCurrentImage] = useState<string | null>(null);
 
     useEffect(() => {
-        if (id) {
+        if (id && id !== "users" && id !== "[id]" && id !== "create" && id !== "edit") {
             fetchUser();
         }
     }, [id]);

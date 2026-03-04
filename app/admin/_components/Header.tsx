@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { logoutUser } from "@/lib/action/auth_action";
+import { logoutUser, getUserFromCookies } from "@/lib/action/auth_action";
 import { useEffect, useState } from "react";
 import { LogOut, User } from "lucide-react";
 
@@ -12,21 +12,17 @@ export default function Header() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Get user data from cookies/session
-        const getUserData = async () => {
+        const loadUserData = async () => {
             try {
-                const response = await fetch("/api/user", {
-                    method: "GET",
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setUserEmail(data.email || "Admin");
+                const response = await getUserFromCookies();
+                if (response.success) {
+                    setUserEmail(response.data?.email || "Admin");
                 }
             } catch (error) {
-                console.error("Failed to fetch user:", error);
+                console.error("Failed to load user data:", error);
             }
         };
-        getUserData();
+        loadUserData();
     }, []);
 
     const handleLogout = async () => {

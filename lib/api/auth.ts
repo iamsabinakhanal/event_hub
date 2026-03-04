@@ -74,3 +74,37 @@ export const resetPassword = async(token: string, newPassword: string) => {
         );
     }
 }
+
+export const getProfile = async() => {
+    try{
+        const response = await axios.get(
+            API.AUTH.WHOAMI
+        );
+        return response.data;
+    }catch(err: Error | any){
+        throw new Error
+        (
+            err.response?.data?.message
+            || err.message
+            ||"Failed to fetch profile"
+        );
+    }
+}
+
+export const updateProfile = async(profileData: FormData | any) => {
+    try{
+        const response = await axios.put(
+            API.AUTH.UPDATE_PROFILE,
+            profileData,
+            profileData instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {}
+        );
+        return response.data;
+    }catch(err: Error | any){
+        throw new Error
+        (
+            err.response?.data?.message
+            || err.message
+            ||"Failed to update profile"
+        );
+    }
+}

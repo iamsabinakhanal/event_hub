@@ -29,9 +29,22 @@ export default function AdminDashboard() {
             if (result.success) {
                 const users = result.data || [];
                 
+                // Validate user data
+                const validUsers = users.filter((user: any) => {
+                    if (!user._id || typeof user._id !== 'string') {
+                        console.warn("Invalid user ID:", user._id);
+                        return false;
+                    }
+                    if (["create", "edit", "delete", "users", "admin", "undefined", "null"].includes(user._id.toLowerCase())) {
+                        console.warn("Reserved route name used as user ID:", user._id);
+                        return false;
+                    }
+                    return true;
+                });
+                
                 // Calculate statistics
-                const totalUsers = users.length;
-                const adminUsers = users.filter((user: any) => user.role === "admin").length;
+                const totalUsers = validUsers.length;
+                const adminUsers = validUsers.filter((user: any) => user.role === "admin").length;
                 const regularUsers = totalUsers - adminUsers;
                 
                 setStats({
@@ -41,7 +54,7 @@ export default function AdminDashboard() {
                 });
                 
                 // Get recent users (last 5)
-                setRecentUsers(users.slice(0, 5));
+                setRecentUsers(validUsers.slice(0, 5));
             } else {
                 setError(result.message || "Failed to fetch dashboard data");
                 console.error("Dashboard fetch error:", result.message);

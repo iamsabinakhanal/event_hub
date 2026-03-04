@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, BookOpen, FolderOpen } from "lucide-react";
+import { LayoutDashboard, Users, Briefcase, Images, Heart, Mail, Calendar } from "lucide-react";
 
 const ADMIN_LINKS = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/users", label: "Users", icon: Users },
-    { href: "/admin/blogs", label: "Blogs", icon: BookOpen },
-    { href: "/admin/categories", label: "Categories", icon: FolderOpen },
+    { href: "/admin/services", label: "Services", icon: Briefcase },
+    { href: "/admin/bookings", label: "Bookings", icon: Calendar },
+    { href: "/admin/gallery", label: "Gallery", icon: Images },
+    { href: "/admin/favorites", label: "Favorites", icon: Heart },
+    { href: "/admin/contacts", label: "Inbox", icon: Mail },
 ];
 
 export default function Sidebar() {

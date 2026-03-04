@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getUserById } from "@/lib/action/admin_action";
+import { handleGetUserFavorites } from "@/lib/action/favorite_action";
 import Link from "next/link";
+import { Heart } from "lucide-react";
 
 export default function UserDetailPage() {
     const router = useRouter();
@@ -11,11 +13,12 @@ export default function UserDetailPage() {
     const id = params?.id as string;
     
     const [user, setUser] = useState<any>(null);
+    const [favorites, setFavorites] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        if (id) {
+        if (id && id !== "users" && id !== "[id]" && id !== "create" && id !== "edit") {
             fetchUser();
         }
     }, [id]);
@@ -26,6 +29,11 @@ export default function UserDetailPage() {
             const result = await getUserById(id);
             if (result.success) {
                 setUser(result.data);
+                // Fetch user's favorites
+                const favResult = await handleGetUserFavorites(id);
+                if (favResult.success) {
+                    setFavorites(favResult.data || []);
+                }
             } else {
                 setMessage(result.message || "Failed to fetch user");
             }
@@ -163,6 +171,44 @@ export default function UserDetailPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* User Favorites Section */}
+                {favorites.length > 0 && (
+                    <div className="mt-8 bg-white rounded-lg shadow-md p-8">
+                        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+                            <Heart size={24} className="text-red-500" />
+                            Favorite Services ({favorites.length})
+                        </h2>
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-100 border-b">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold">Service Name</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold">Price</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold">Added On</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y">
+                                    {favorites.map((fav: any) => (
+                                        <tr key={fav._id} className="hover:bg-gray-50">
+                                            <td className="px-4 py-3 font-medium">{fav.service_id?.name || "N/A"}</td>
+                                            <td className="px-4 py-3">
+                                                <span className="bg-purple-100 text-purple-800 text-xs px-3 py-1 rounded-full">
+                                                    {fav.service_id?.category || "N/A"}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 font-medium">${fav.service_id?.price?.toFixed(2) || "0.00"}</td>
+                                            <td className="px-4 py-3 text-sm text-gray-600">
+                                                {new Date(fav.createdAt).toLocaleDateString()}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

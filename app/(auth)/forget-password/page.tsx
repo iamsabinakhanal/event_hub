@@ -27,13 +27,18 @@ export default function ForgetPasswordPage() {
     const onSubmit = async (data: ForgetPasswordData) => {
         try {
             const response = await forgetPassword(data.email);
-            if (response.success) {
+            console.log('Forget password response:', response);
+            
+            if (response && response.success) {
                 setEmailSent(true);
                 toast.success('Password reset link sent to your email!');
+            } else if (response && response.message) {
+                toast.error(response.message);
             } else {
-                toast.error(response.message || 'Failed to send reset link.');
+                toast.error('Failed to send reset link.');
             }
         } catch (error) {
+            console.error('Forget password error:', error);
             toast.error((error as Error).message || 'Failed to send reset link.');
         }
     };
@@ -89,13 +94,15 @@ export default function ForgetPasswordPage() {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div className="space-y-1">
-                        <label className="text-sm font-semibold text-gray-700">
+                        <label htmlFor="email" className="text-sm font-semibold text-gray-700">
                             Email Address
                         </label>
                         <div className="relative">
                             <input
+                                id="email"
                                 type="email"
                                 placeholder="Enter your email"
+                                autoComplete="email"
                                 className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
                                 {...register("email")}
                             />

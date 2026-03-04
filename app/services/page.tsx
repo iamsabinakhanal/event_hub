@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Navbar from "@/components/navbar";
+import PublicFooter from "@/components/PublicFooter";
 import { useState, useEffect } from "react";
 import BookingForm from "@/app/components/BookingForm";
 import { Service } from "@/lib/types/booking.type";
@@ -143,6 +144,8 @@ export default function ServicesPage() {
           }}
         />
       )}
+      
+      <PublicFooter />
     </div>
   );
 }

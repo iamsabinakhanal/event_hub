@@ -3,6 +3,17 @@
 import axios from "@/lib/api/axios";
 import { getAuthToken } from "@/lib/cookies";
 
+// Validate MongoDB ObjectId format
+const isValidObjectId = (id: string): boolean => {
+    return /^[0-9a-fA-F]{24}$/.test(id);
+};
+
+// Validate that ID is not a reserved route name
+const isReservedRouteName = (id: string): boolean => {
+    const reserved = ["create", "edit", "delete", "users", "admin", "undefined", "null"];
+    return reserved.includes(id.toLowerCase());
+};
+
 // Get all users (Admin only)
 export const getAllUsers = async () => {
     try {
@@ -11,7 +22,7 @@ export const getAllUsers = async () => {
             throw new Error("No authentication token found");
         }
 
-        const response = await axios.get("/api/admin/users", {
+        const response = await axios.get("/api/admin", {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -34,12 +45,20 @@ export const getAllUsers = async () => {
 // Get user by ID (Admin only)
 export const getUserById = async (id: string) => {
     try {
+        // Validate ID format
+        if (!id || isReservedRouteName(id)) {
+            return {
+                success: false,
+                message: "Invalid user ID format",
+            };
+        }
+
         const token = await getAuthToken();
         if (!token) {
             throw new Error("No authentication token found");
         }
 
-        const response = await axios.get(`/api/admin/users/${id}`, {
+        const response = await axios.get(`/api/admin/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -67,7 +86,7 @@ export const createUserAdmin = async (formData: FormData) => {
             throw new Error("No authentication token found");
         }
 
-        const response = await axios.post("/api/admin/users", formData, {
+        const response = await axios.post("/api/admin", formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "multipart/form-data",
@@ -92,12 +111,20 @@ export const createUserAdmin = async (formData: FormData) => {
 // Update user (Admin only)
 export const updateUserAdmin = async (id: string, formData: FormData) => {
     try {
+        // Validate ID format
+        if (!id || isReservedRouteName(id)) {
+            return {
+                success: false,
+                message: "Invalid user ID format",
+            };
+        }
+
         const token = await getAuthToken();
         if (!token) {
             throw new Error("No authentication token found");
         }
 
-        const response = await axios.put(`/api/admin/users/${id}`, formData, {
+        const response = await axios.put(`/api/admin/${id}`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "multipart/form-data",
@@ -121,12 +148,20 @@ export const updateUserAdmin = async (id: string, formData: FormData) => {
 // Delete user (Admin only)
 export const deleteUserAdmin = async (id: string) => {
     try {
+        // Validate ID format
+        if (!id || isReservedRouteName(id)) {
+            return {
+                success: false,
+                message: "Invalid user ID format",
+            };
+        }
+
         const token = await getAuthToken();
         if (!token) {
             throw new Error("No authentication token found");
         }
 
-        const response = await axios.delete(`/api/admin/users/${id}`, {
+        const response = await axios.delete(`/api/admin/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -148,6 +183,14 @@ export const deleteUserAdmin = async (id: string) => {
 // Update user profile (authenticated user)
 export const updateProfile = async (id: string, formData: FormData) => {
     try {
+        // Validate ID format
+        if (!id || isReservedRouteName(id)) {
+            return {
+                success: false,
+                message: "Invalid user ID format",
+            };
+        }
+
         const token = await getAuthToken();
         if (!token) {
             throw new Error("No authentication token found");
@@ -156,7 +199,7 @@ export const updateProfile = async (id: string, formData: FormData) => {
         const response = await axios.put(`/api/auth/${id}`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data",
+                // Don't set Content-Type when sending FormData - let axios/browser handle it
             },
         });
 
@@ -167,9 +210,10 @@ export const updateProfile = async (id: string, formData: FormData) => {
         };
     } catch (error: any) {
         console.error("[updateProfile] error:", error);
+        console.error("[updateProfile] error response:", error.response?.data);
         return {
             success: false,
-            message: error.response?.data?.message || "Failed to update profile",
+            message: error.response?.data?.message || error.message || "Failed to update profile",
         };
     }
 };

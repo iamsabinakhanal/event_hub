@@ -20,7 +20,19 @@ export default function AdminUsersPage() {
         try {
             const result = await getAllUsers();
             if (result.success) {
-                setUsers(result.data || []);
+                // Validate user data and filter out invalid IDs
+                const validUsers = (result.data || []).filter((user: any) => {
+                    if (!user._id || typeof user._id !== 'string') {
+                        console.warn("Invalid user ID:", user._id);
+                        return false;
+                    }
+                    if (["create", "edit", "delete", "users", "admin", "undefined", "null"].includes(user._id.toLowerCase())) {
+                        console.warn("Reserved route name used as user ID:", user._id);
+                        return false;
+                    }
+                    return true;
+                });
+                setUsers(validUsers);
             } else {
                 setMessage(result.message || "Failed to fetch users");
             }

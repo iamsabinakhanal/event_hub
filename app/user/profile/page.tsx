@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "@/lib/action/admin_action";
-import Navbar from "@/app/components/navbar";
+import Navbar from "@/components/navbar";
+import PublicFooter from "@/components/PublicFooter";
 import { Upload, Camera } from "lucide-react";
 
 export default function UserProfilePage() {
     const router = useRouter();
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [userData, setUserData] = useState<any>(null);
@@ -180,12 +182,12 @@ export default function UserProfilePage() {
                                     />
                                 ) : userData.image ? (
                                     <img
-                                        src={`http://localhost:5000/${userData.image}`}
+                                        src={`${apiBaseUrl}/${userData.image.replace(/\\/g, "/")}`}
                                         alt="Current"
                                         className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 shadow-lg"
                                     />
                                 ) : (
-                                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border-4 border-gray-200">
+                                    <div className="w-32 h-32 rounded-full bg-linear-to-br from-blue-100 to-indigo-100 flex items-center justify-center border-4 border-gray-200">
                                         <span className="text-4xl font-bold text-blue-600">
                                             {initials}
                                         </span>
@@ -333,6 +335,9 @@ export default function UserProfilePage() {
                     </div>
                 </form>
             </div>
+
+            <PublicFooter />
+            
         </div>
     );
 }

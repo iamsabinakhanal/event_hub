@@ -1,0 +1,43 @@
+{
+  "info": {
+    "name": "Event Hub - Contact API",
+    "description": "Postman collection for Contact Us form endpoint.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Contact Us - Send Message",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"phone\": \"+1-555-0101\",\n  \"subject\": \"Question about booking\",\n  \"message\": \"Hi team, I want to know if your venue supports 300 guests.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/contact",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "contact"
+          ]
+        },
+        "description": "Required fields: name, email, subject, message. Optional: phone."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}

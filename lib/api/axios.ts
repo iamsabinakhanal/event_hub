@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 // Ensure we use the correct base URL from environment
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
@@ -26,14 +26,21 @@ axiosInstance.interceptors.request.use(
 // Add error interceptor for debugging
 axiosInstance.interceptors.response.use(
   response => response,
-  error => {
-    // Only log errors in development, and skip 401 (auth errors handled elsewhere)
-    if (process.env.NODE_ENV === 'development' && error.response?.status !== 401) {
-      console.error('API Error:', {
-        status: error.response?.status,
+  (error: AxiosError) => {
+    if (process.env.NODE_ENV === "development") {
+      const status = error.response?.status;
+      const details = {
+        status,
+        url: error.config?.url,
         data: error.response?.data,
-        message: error.message
-      });
+        message: error.message,
+      };
+
+      if (!status || status >= 500) {
+        console.error("API request failed:", details);
+      } else if (status >= 400) {
+        console.warn("API request rejected:", details);
+      }
     }
     return Promise.reject(error);
   }

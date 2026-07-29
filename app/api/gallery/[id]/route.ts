@@ -3,10 +3,10 @@ import axiosInstance from '@/lib/api/axios';
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const response = await axiosInstance.get(`api/gallery/${id}`);
         return NextResponse.json(response.data);
     } catch (error: any) {
@@ -20,10 +20,10 @@ export async function GET(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const cookieHeader = req.headers.get('cookie');
 
         const response = await axiosInstance.delete(`api/gallery/${id}`, {
@@ -44,10 +44,10 @@ export async function DELETE(
 
 export async function PUT(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const formData = await req.formData();
         const cookieHeader = req.headers.get('cookie');
 

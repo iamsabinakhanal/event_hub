@@ -2,7 +2,7 @@
 "use server";
 
 import {registerUser, loginUser, forgetPassword, resetPassword, getProfile, updateProfile} from "../api/auth";
-import { setAuthToken, setUserData, clearAuthCookies, getAuthToken } from "../cookies";
+import { setAuthToken, setUserData, clearAuthCookies, getAuthToken, getUserData } from "../cookies";
 
 export const handleRegister=async(registerData:any)=>{
     //call backend api
@@ -67,6 +67,12 @@ export const handleRegister=async(registerData:any)=>{
             }
         }
     }
+
+export const handleOAuthToken = async (token: string) => {
+    if (!token) return { success: false, message: "Missing OAuth token" };
+    await setAuthToken(token);
+    return { success: true };
+};
 
 export const logoutUser = async () => {
     try {
@@ -212,3 +218,18 @@ export const getUserFromCookies = async () => {
         };
     }
 };
+
+const authApiRequest = async (path: string, body?: unknown) => {
+    const token = await getAuthToken();
+    if (!token) return { success: false, message: "Not authenticated" };
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050"}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: body ? JSON.stringify(body) : undefined,
+        cache: "no-store",
+    });
+    return await response.json();
+};
+
+export const handleTotpSetup = async () => authApiRequest("/api/auth/totp/setup");
+export const handleTotpVerify = async (code: string) => authApiRequest("/api/auth/totp/verify", { code });

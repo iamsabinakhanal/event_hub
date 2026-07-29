@@ -10,7 +10,7 @@ export const setAuthToken = async (token: string) => {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
-        maxAge: 60 * 60 * 24 * 7 // 7 days
+        maxAge: 60 * 60 * 24 * 15
     })
 }
 export const getAuthToken = async () => {
@@ -29,7 +29,7 @@ export const setUserData = async (userData: any) => {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
-        maxAge: 60 * 60 * 24 * 7 // 7 days
+        maxAge: 60 * 60 * 24 * 15
     })
 }
 export const getUserData = async () => {

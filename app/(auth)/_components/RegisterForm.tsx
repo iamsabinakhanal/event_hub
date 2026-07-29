@@ -5,9 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
-
-import InputField from "../../components/inputField";
-import Button from "../../components/button";
+import { Eye, EyeOff } from "lucide-react";
+import axios from "axios";
 
 import { registerSchema, type RegisterData } from "../../scheme";
 import { handleRegister } from "@/lib/action/auth_action";
@@ -16,6 +15,12 @@ export default function RegisterForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const {
     register,
@@ -24,6 +29,7 @@ export default function RegisterForm() {
   } = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      username: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -35,6 +41,7 @@ export default function RegisterForm() {
   const onSubmit = async (values: RegisterData) => {
     setIsSubmitting(true);
     setError(null);
+    setSuccess(null);
 
     const res = await handleRegister(values);
 
@@ -45,7 +52,33 @@ export default function RegisterForm() {
       return;
     }
 
-    router.push("/auth/login");
+    setVerificationEmail(values.email);
+    setSuccess(res.message || "Account created. Check your email for the verification code.");
+  };
+
+  const handleVerifyEmail = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setIsVerifying(true);
+
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050"}/api/auth/verify-email`, {
+        email: verificationEmail,
+        code: verificationCode,
+      });
+
+      if (response.data?.success) {
+        setSuccess("Email verified successfully. You can now sign in.");
+        setTimeout(() => router.push("/auth/login"), 1200);
+      } else {
+        setError(response.data?.message || "Verification failed");
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message || "Verification failed");
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   return (
@@ -103,6 +136,20 @@ export default function RegisterForm() {
                 </div>
               </div>
 
+              {/* Username Field */}
+              <div className="space-y-2">
+                <label className="text-white text-sm font-semibold">Username</label>
+                <input
+                  type="text"
+                  placeholder="johndoe"
+                  {...register("username")}
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition"
+                />
+                {errors.username && (
+                  <p className="text-red-400 text-xs">{errors.username.message}</p>
+                )}
+              </div>
+
               {/* Email Field */}
               <div className="space-y-2">
                 <label className="text-white text-sm font-semibold">Email Address</label>
@@ -120,12 +167,23 @@ export default function RegisterForm() {
               {/* Password Field */}
               <div className="space-y-2">
                 <label className="text-white text-sm font-semibold">Password</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  {...register("password")}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    {...register("password")}
+                    className="w-full px-4 py-3 pr-12 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    title={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className="text-red-400 text-xs">{errors.password.message}</p>
                 )}
@@ -134,12 +192,23 @@ export default function RegisterForm() {
               {/* Confirm Password Field */}
               <div className="space-y-2">
                 <label className="text-white text-sm font-semibold">Confirm Password</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  {...register("confirmPassword")}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition"
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    {...register("confirmPassword")}
+                    className="w-full px-4 py-3 pr-12 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((visible) => !visible)}
+                    aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                    title={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
                 {errors.confirmPassword && (
                   <p className="text-red-400 text-xs">{errors.confirmPassword.message}</p>
                 )}
@@ -149,6 +218,12 @@ export default function RegisterForm() {
               {error && (
                 <div className="bg-red-500/20 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg text-sm">
                   {error}
+                </div>
+              )}
+
+              {success && (
+                <div className="bg-green-500/20 border border-green-500/50 text-green-300 px-4 py-3 rounded-lg text-sm">
+                  {success}
                 </div>
               )}
 
@@ -183,6 +258,29 @@ export default function RegisterForm() {
                 )}
               </button>
             </form>
+
+            {verificationEmail && (
+              <form onSubmit={handleVerifyEmail} className="mt-6 rounded-lg border border-gray-800 bg-gray-900/80 p-4">
+                <h3 className="text-white font-semibold mb-2">Verify your email</h3>
+                <p className="text-sm text-gray-400 mb-3">Enter the 6-digit code sent to {verificationEmail}</p>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={verificationCode}
+                  onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, ""))}
+                  placeholder="123456"
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition"
+                />
+                <button
+                  type="submit"
+                  disabled={isVerifying || verificationCode.length !== 6}
+                  className="w-full mt-3 bg-linear-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isVerifying ? "Verifying..." : "Verify Email"}
+                </button>
+              </form>
+            )}
 
             {/* Divider */}
             <div className="flex items-center gap-4 my-6">
